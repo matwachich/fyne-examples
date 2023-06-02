@@ -66,6 +66,17 @@ func main() {
 
 	var root treeNode
 
+	p1 := root.AddChild("Parent 01")
+	p1.AddChild("Child 11")
+	p1.AddChild("Child 12")
+	p2 := root.AddChild("Parent 02")
+	c21 := p2.AddChild("Child 21")
+	c21.AddChild("Child 211")
+	p2.AddChild("Child 22")
+	p3 := root.AddChild("Parent 03")
+	p3.AddChild("Child 31")
+	p3.AddChild("Child 32")
+
 	tree := widget.NewTree(
 		func(tni widget.TreeNodeID) (nodes []widget.TreeNodeID) {
 			if tni == "" {
@@ -81,15 +92,20 @@ func main() {
 			return
 		},
 		func(tni widget.TreeNodeID) bool {
-			node := root.PathToNode(tni)
+			if node := root.PathToNode(tni); node != nil && node.CountChildren() > 0 {
+				return true
+			}
+			return false
 		},
 		func(b bool) fyne.CanvasObject {
-
+			return widget.NewLabel("")
 		},
 		func(tni widget.TreeNodeID, b bool, co fyne.CanvasObject) {
-
+			node := root.PathToNode(tni)
+			co.(*widget.Label).SetText(node.Label)
 		},
 	)
 
+	w.SetContent(tree)
 	w.ShowAndRun()
 }
