@@ -28,15 +28,18 @@ func main() {
 	w.ShowAndRun()
 }
 
+// DateEntry is a widget.Entry that only accept a date input.
+// Date format is 02/01/2006 (dd/mm/yyyy).
 type DateEntry struct {
 	widget.Entry
 
-	OnChanged   func(time.Time)
-	OnSubmitted func(time.Time)
+	OnChanged   func(time.Time) // Called when the data changes
+	OnSubmitted func(time.Time) // Called when Enter is pressed in the input
 
 	valid bool
 }
 
+// NewDateEntry creates a new DateEntry.
 func NewDateEntry() *DateEntry {
 	d := &DateEntry{}
 	d.ExtendBaseWidget(d)
@@ -66,6 +69,8 @@ func (d *DateEntry) callOnChanged() {
 	d.Entry.OnChanged(d.Text)
 }
 
+// SetString will set date entry text.
+// Only dates in format 02/01/2006 are accepted. Any other caracter in s will be ignored.
 func (d *DateEntry) SetString(s string) {
 	d.Text = "__/__/____"
 	d.CursorColumn = 0
@@ -76,6 +81,8 @@ func (d *DateEntry) SetString(s string) {
 	d.Refresh()
 }
 
+// GetString returns the currently entered date in string format (02/01/2006).
+// If entered date is not valid, it will return empty string.
 func (d *DateEntry) GetString() string {
 	tm, err := time.ParseInLocation("02/01/2006", d.Text, time.Local)
 	if err != nil || tm.IsZero() {
@@ -84,6 +91,8 @@ func (d *DateEntry) GetString() string {
 	return d.Text
 }
 
+// SetTime will set currently displayed date to tm.
+// If tm.IsZero(), it will set empty date (__/__/____).
 func (d *DateEntry) SetTime(tm time.Time) {
 	if tm.IsZero() {
 		d.Text = "__/__/____"
@@ -96,8 +105,11 @@ func (d *DateEntry) SetTime(tm time.Time) {
 	d.Refresh()
 }
 
-func (d *DateEntry) GetTime() (time.Time, error) {
-	return time.ParseInLocation("02/01/2006", d.Text, time.Local)
+// GetTime wil return the currently entered date as time.Time.
+// If entered date is not valid, it will return a zero time object.
+func (d *DateEntry) GetTime() (tm time.Time) {
+	tm, _ = time.ParseInLocation("02/01/2006", d.Text, time.Local)
+	return
 }
 
 func (d *DateEntry) MinSize() fyne.Size {
