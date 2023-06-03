@@ -13,6 +13,13 @@ type treeNode struct {
 	children []*treeNode
 }
 
+func NewNode(label string, nodes ...*treeNode) *treeNode {
+	return &treeNode{
+		Label:    label,
+		children: nodes,
+	}
+}
+
 func (n *treeNode) AddChild(label string) *treeNode {
 	if n.GetChild(label) != nil {
 		return nil
@@ -64,18 +71,20 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("Tree Simple Example")
 
-	var root treeNode
-
-	p1 := root.AddChild("Parent 01")
-	p1.AddChild("Child 11")
-	p1.AddChild("Child 12")
-	p2 := root.AddChild("Parent 02")
-	c21 := p2.AddChild("Child 21")
-	c21.AddChild("Child 211")
-	p2.AddChild("Child 22")
-	p3 := root.AddChild("Parent 03")
-	p3.AddChild("Child 31")
-	p3.AddChild("Child 32")
+	root := NewNode("", // root node must always have empty label
+		NewNode("Parent 01",
+			NewNode("Children 01-01",
+				NewNode("Children 01-01-01"),
+			),
+			NewNode("Children 01-02",
+				NewNode("Children 01-02-01"),
+			),
+		),
+		NewNode("Parent 02",
+			NewNode("Children 02-01"),
+		),
+		NewNode("Parent 03"),
+	)
 
 	tree := widget.NewTree(
 		func(tni widget.TreeNodeID) (nodes []widget.TreeNodeID) {
